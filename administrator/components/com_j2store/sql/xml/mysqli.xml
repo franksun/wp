@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <!-- Metadata -->
+    <meta>
+        <!-- Supported driver types -->
+        <drivers>
+            <driver>mysql</driver>
+            <driver>mysqli</driver>
+        </drivers>
+    </meta>
+
+    <!-- SQL commands to run on installation and update -->
+    <sql>
+        <!-- Create tables if they are missing -->
+        <action table="#__j2store_filtergroups" canfail="1">
+            <condition type="missing" value="" />
+            <query><![CDATA[
+			CREATE TABLE IF NOT EXISTS `#__j2store_filtergroups` (
+			  `j2store_filtergroup_id` int(11) NOT NULL AUTO_INCREMENT,
+			  `group_name` varchar(255) NOT NULL,
+			  `ordering` int(11) NOT NULL,
+			  `enabled` int(11) NOT NULL,
+			  PRIMARY KEY (`j2store_filtergroup_id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 ;
+            ]]></query>
+        </action>
+        
+        <action table="#__j2store_filters" canfail="1">
+            <condition type="missing" value="" />
+            <query><![CDATA[
+			CREATE TABLE IF NOT EXISTS `#__j2store_filters` (
+			  `j2store_filter_id` int(11) NOT NULL AUTO_INCREMENT,
+			  `group_id` int(11) NOT NULL,
+			  `filter_name` varchar(255) DEFAULT NULL,
+			  `ordering` int(11) NOT NULL,
+			  PRIMARY KEY (`j2store_filter_id`),
+			  KEY `group_id` (`group_id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 ;
+            ]]></query>
+        </action>
+        
+        <action table="#__j2store_product_filters" canfail="1">
+            <condition type="missing" value="" />
+            <query><![CDATA[
+			CREATE TABLE IF NOT EXISTS `#__j2store_product_filters` (
+			  `product_id` int(11) NOT NULL,
+			  `filter_id` int(11) NOT NULL,
+			  PRIMARY KEY (`product_id`,`filter_id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ]]></query>
+        </action>
+        
+        <action table="#__j2store_variants" canfail="0">
+            <condition type="missing" value="sold" />
+            <query><![CDATA[
+				ALTER TABLE `#__j2store_variants` ADD `sold` decimal(12,4) AFTER `availability`;
+            ]]></query>
+        </action>
+        
+         <action table="#__j2store_coupons" canfail="0">        
+            <condition type="missing" value="users" />
+            <query><![CDATA[
+            	ALTER TABLE `#__j2store_coupons` ADD `users` text AFTER `min_subtotal`;
+            ]]></query>        
+        </action>
+        
+        <action table="#__j2store_coupons" canfail="0">        
+            <condition type="missing" value="mycategory" />
+            <query><![CDATA[
+            	ALTER TABLE `#__j2store_coupons` ADD `mycategory` text AFTER `users`;
+            ]]></query>        
+        </action>
+        
+        <action table="#__j2store_emailtemplates" canfail="0">        
+            <condition type="missing" value="body_source" />
+            <query><![CDATA[
+            	ALTER TABLE `#__j2store_emailtemplates` ADD `body_source` varchar(255) AFTER `body`;
+            ]]></query>        
+        </action>
+        
+        <action table="#__j2store_emailtemplates" canfail="0">        
+            <condition type="missing" value="body_source_file" />
+            <query><![CDATA[
+            	ALTER TABLE `#__j2store_emailtemplates` ADD `body_source_file` varchar(255) AFTER `body_source`;
+            ]]></query>        
+        </action>     
+        
+         <action table="#__j2store_coupons" canfail="0">        
+            <condition type="missing" value="brand_ids" />
+            <query><![CDATA[
+            	ALTER TABLE `#__j2store_coupons` ADD `brand_ids` text AFTER `mycategory`;
+            ]]></query>        
+        </action>
+        
+         <action table="#__j2store_carts" canfail="0">        
+            <condition type="missing" value="cart_type" />
+            <query><![CDATA[
+            	ALTER TABLE `#__j2store_carts` ADD `cart_type` varchar(255) AFTER `session_id`;
+            ]]></query>        
+        </action>
+        
+        <action table="#__j2store_carts" canfail="0">        
+            <condition type="missing" value="cart_browser" />
+            <query><![CDATA[
+            	ALTER TABLE `#__j2store_carts` ADD `cart_browser` varchar(255) AFTER `cart_type`;
+            ]]></query>        
+        </action>
+        
+        <action table="#__j2store_carts" canfail="0">        
+            <condition type="missing" value="cart_analytics" />
+            <query><![CDATA[
+            	ALTER TABLE `#__j2store_carts` ADD `cart_analytics` text AFTER `cart_browser`;
+            ]]></query>        
+        </action>
+        
+          <action table="#__j2store_carts" canfail="0">        
+            <condition type="missing" value="cart_params" />
+            <query><![CDATA[
+            	ALTER TABLE `#__j2store_carts` ADD `cart_params` text AFTER `cart_analytics`;
+            ]]></query>        
+        </action>
+        
+        <action table="#__j2store_carts" canfail="0">        
+            <condition type="missing" value="created_on" />
+            <query><![CDATA[
+            	ALTER TABLE `#__j2store_carts` ADD `created_on` datetime AFTER `cart_analytics`;
+            ]]></query>        
+        </action>
+        
+        <action table="#__j2store_carts" canfail="0">        
+            <condition type="missing" value="modified_on" />
+            <query><![CDATA[
+            	ALTER TABLE `#__j2store_carts` ADD `modified_on` datetime AFTER `created_on`;
+            ]]></query>        
+        </action>
+        
+           
+        <action table="#__j2store_cartitems" canfail="0">
+            <condition type="missing" value="" />
+            <query><![CDATA[
+			CREATE TABLE IF NOT EXISTS `#__j2store_cartitems` (
+			  `j2store_cartitem_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+			  `cart_id` int(11) unsigned NOT NULL,
+			  `product_id` int(11) unsigned NOT NULL,
+			  `variant_id` int(11) unsigned NOT NULL,
+			  `vendor_id` int(11) unsigned NOT NULL,
+			  `product_type` varchar(255) NOT NULL,
+			  `cartitem_params` text NOT NULL,
+			  `product_qty` decimal(12,4) NOT NULL,
+			  `product_options` text NOT NULL,
+			  PRIMARY KEY (`j2store_cartitem_id`),
+			  KEY `cart_id` (`cart_id`),
+			  KEY `product_id` (`product_id`),
+			  KEY `variant_id` (`variant_id`)
+			) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+            ]]></query>
+        </action>
+        
+        
+        <action table="#__j2store_orders" canfail="0">        
+            <condition type="missing" value="cart_id" />
+            <query><![CDATA[
+            	ALTER TABLE `#__j2store_orders` ADD `cart_id` int(11) unsigned AFTER `order_id`;
+            ]]></query>
+        </action>
+        
+         <action table="#__j2store_orderitems" canfail="0">        
+            <condition type="missing" value="cartitem_id" />
+            <query><![CDATA[
+            	ALTER TABLE `#__j2store_orderitems` ADD `cartitem_id` int(11) unsigned AFTER `cart_id`;
+            ]]></query>
+        </action>
+        
+        <action table="#__j2store_orderinfos" canfail="0">        
+            <condition type="true" />
+            <query><![CDATA[            	
+            	ALTER TABLE `#__j2store_orderinfos` MODIFY `order_id` VARCHAR(255) NOT NULL;
+            ]]></query>        
+        </action>
+        
+         <action table="#__j2store_options" canfail="0">        
+            <condition type="true"/>
+            <query><![CDATA[            	
+            	ALTER TABLE `#__j2store_options` ADD `option_params` text AFTER `enabled`;
+            ]]></query>        
+        </action>
+        
+        <action table="#__j2store_product_options" canfail="0">        
+            <condition type="true"/>
+            <query><![CDATA[            	
+            	ALTER TABLE `#__j2store_product_options` ADD `is_variant` int(11) AFTER `required`;
+            ]]></query>        
+        </action>
+        
+    </sql>
+</schema>
